@@ -34,7 +34,7 @@ int findLess(int space[], int nspaces, int depth){
 	int min_value = quantum(cell);
 	int min_index = depth;
 	int i;
-	for(i=depth+1;i<nspaces;i++){
+	for(i=depth+1;i<nspaces&& min_value>1;i++){
 		int temp_value = quantum(space[i]);
 		if(temp_value < min_value){
 			min_value = temp_value;
