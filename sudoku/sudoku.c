@@ -13,6 +13,43 @@ int64_t now()
 int buddy[81][20] = {-1};
 int board_temp[81] = {0};
 
+int quantum(int cell){
+	int cache[10] = {0};
+	int i , index;
+	for(i=0;i<20;i++){
+		index = buddy[cell][i];	
+		cache[board_temp[index]] = 1;
+	}
+	int counter = 0;
+	for(i=0;i<10;i++){
+		if(cache[i] == 0)
+			counter = counter + 1;
+	}
+	return counter;
+}
+
+
+int findLess(int space[], int nspaces, int depth){
+	int cell = space[depth];
+	int min_value = quantum(cell);
+	int min_index = depth;
+	int i;
+	for(i=depth+1;i<nspaces;i++){
+		int temp_value = quantum(space[i]);
+		if(temp_value < min_value){
+			min_value = temp_value;
+			min_index = i;
+		}
+	}
+	if(min_index != depth){
+		i = space[depth];
+		space[depth] = space[min_index];
+		space[min_index] = i;
+	}
+	return space[depth];
+}
+
+
 
 void solveSudoku(char** board, int boardRowSize, int boardColSize) {
     int space[81] = {-1};
@@ -63,8 +100,10 @@ void solveSudoku(char** board, int boardRowSize, int boardColSize) {
 	int k = 0;
 	int guess = 0;
 	while(k < nspaces){
-		int index = space[k];
-
+		// ---- find -----
+		//int index = space[k];
+		int index = findLess(space,nspaces,k);
+		// ---------------
 		int temp_row = index / 9;
 		int temp_col = index % 9;
 		int flag = 0;
