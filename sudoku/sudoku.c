@@ -2,6 +2,16 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
+void printBoard(int* board){
+	printf("\n--------- board_temp -------\n");
+	int i;
+	for(i = 0; i < 81; i++){
+		if( i%9 == 0)
+			printf("\n");
+		printf(" %d" , board[i]);
+	}
+	printf("\n****** end ******************\n");
+}
 
 int64_t now()
 {
@@ -48,8 +58,6 @@ int findLess(int space[], int nspaces, int depth){
 	}
 	return space[depth];
 }
-
-
 
 void solveSudoku(char** board, int boardRowSize, int boardColSize) {
     int space[81] = {-1};
@@ -99,15 +107,14 @@ void solveSudoku(char** board, int boardRowSize, int boardColSize) {
 
 	int k = 0;
 	int guess = 0;
+	int index = findLess(space,nspaces,0); // push stack
+	//int index;
 	while(k < nspaces){
-		// ---- find -----
-		//int index = space[k];
-		int index = findLess(space,nspaces,k);
-		// ---------------
+		index = space[k]; // pop stack
 		int temp_row = index / 9;
 		int temp_col = index % 9;
 		int flag = 0;
-
+			
 		for(guess=stack[k] + 1;guess<=9;guess++){
 			// check available
 			int in = 1;
@@ -129,6 +136,9 @@ void solveSudoku(char** board, int boardRowSize, int boardColSize) {
 		}
 		if(flag == 1){
 			k++;
+			if(k == nspaces)
+				break;
+			findLess(space,nspaces,k); //push stack
 			continue;
 		}
 		else{ // 1 - 9 not available , then back step
@@ -137,6 +147,7 @@ void solveSudoku(char** board, int boardRowSize, int boardColSize) {
 			stack[k] = 0;
 			k--;
 			if(k < 0){
+				printf("No solution\n");
 				break;
 			}		
 		}
@@ -169,8 +180,10 @@ void testPrint(char** board, int boardRowSize, int boardColSize){
 }
 
 
-void main(){
+int main(){
 	char** problem = (char**)malloc(9 * 9);
+
+	/*
 	char row_1[9] = {'5','3','.','.','7','.','.','.','.'};
 	char row_2[9] = {'6','.','.','1','9','5','.','.','.'};
 	char row_3[9] = {'.','9','8','.','.','.','.','6','.'};
@@ -180,6 +193,20 @@ void main(){
 	char row_7[9] = {'.','6','.','.','.','.','2','8','.'};
 	char row_8[9] = {'.','.','.','4','1','9','.','.','5'};
 	char row_9[9] = {'.','.','.','.','8','.','.','7','9'};
+	*/
+	char row_1[9] = {'.','.','9','7','4','8','.','.','.'};
+	char row_2[9] = {'7','.','.','.','.','.','.','.','.'};
+	char row_3[9] = {'.','2','.','1','.','9','.','.','.'};
+	char row_4[9] = {'.','.','7','.','.','.','2','4','.'};
+	char row_5[9] = {'.','6','4','.','1','.','5','9','.'};
+	char row_6[9] = {'.','9','8','.','.','.','3','.','.'};
+	char row_7[9] = {'.','.','.','8','.','3','.','2','.'};
+	char row_8[9] = {'.','.','.','.','.','.','.','.','6'};
+	char row_9[9] = {'.','.','.','2','7','5','9','.','.'};
+	
+
+
+
 	problem[0] = row_1; problem[1] = row_2; problem[2] = row_3; 
 	problem[3] = row_4; problem[4] = row_5; problem[5] = row_6;
 	problem[6] = row_7; problem[7] = row_8; problem[8] = row_9;
@@ -190,6 +217,7 @@ void main(){
 	double sec = (end-start)/1000000.0;
 	printf("%f sec %f ms \n", sec, 1000*sec);
 	testPrint(problem,9,9);
+	return 0;
 }
 
 
